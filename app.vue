@@ -1,6 +1,7 @@
 <template lang="pug">
-div
+div(v-if="horizontal")
   div(ref="div" v-show="!loading")
+div(v-else) 画面を横向きにしてください
 </template>
 
 
@@ -18,126 +19,134 @@ import {
 } from "three";
 // @ts-ignore
 import { ArToolkitSource, ArToolkitContext, ArMarkerControls } from "@ar-js-org/ar.js/three.js/build/ar-threex";
-
-const renderer = new WebGLRenderer({
-  alpha: true,
-});
-renderer.setClearColor(new Color(), 0);
-renderer.domElement.style.position = "absolute";
-renderer.domElement.style.top = "0px";
-renderer.domElement.style.left = "0px";
-
-const scene = new Scene();
-scene.visible = false;
-const camera = new Camera();
-scene.add(camera);
-
-const arToolkitSource = new ArToolkitSource({
-  sourceType: "webcam",
-  displayWidth: window.innerWidth,
-  displayHeight: window.innerHeight
-});
-
 const loading = ref(true)
-arToolkitSource.init(() => {
-  setTimeout(() => {
-    onResize();
-    loading.value = false;
-  }, 2000);
-});
+const horizontal = window.innerHeight < window.innerWidth;
+if (horizontal) {
+  const renderer = new WebGLRenderer({
+    alpha: true,
+  });
+  renderer.setClearColor(new Color(), 0);
+  renderer.domElement.style.position = "absolute";
+  renderer.domElement.style.top = "0px";
+  renderer.domElement.style.left = "0px";
 
-const arToolkitContext = new ArToolkitContext({
-  cameraParametersUrl: "data/camera_para.dat",
-  detectionMode: 'mono',
-  patternRatio: 0.5,
-  sourceWidth: window.innerWidth,
-  sourceHeight: window.innerHeight,
-  canvasWidth: window.innerWidth,
-  canvasHeight: window.innerHeight,
-  // debug: true
-});
+  const scene = new Scene();
+  scene.visible = false;
+  const camera = new Camera();
+  scene.add(camera);
 
-arToolkitContext.init(() => {
-  camera.projectionMatrix.copy(arToolkitContext.getProjectionMatrix());
-});
+  const arToolkitSource = new ArToolkitSource({
+    sourceType: "webcam",
+    displayWidth: window.innerWidth,
+    displayHeight: window.innerHeight
+  });
 
-const marker = new Group();
-scene.add(marker);
-const arMarkerControls = new ArMarkerControls(arToolkitContext, marker, {
-  type: "pattern",
-  patternUrl: "data/pattern-nakaya.patt",
-  changeMatrixMode: "modelViewMatrix",
-});
-const mesh = new Mesh(new BoxGeometry(), new MeshNormalMaterial());
-mesh.position.y = 0.5;
-marker.add(mesh);
 
-const div = ref<HTMLDivElement>()
-onMounted(() => {
-  div.value?.appendChild?.(renderer.domElement);
-})
-// const width = ref(window.innerWidth)
-// const height = ref(window.innerHeight)
-const onResize = () => {
-  // width.value = window.innerWidth;
-  // height.value = window.innerHeight;
-  // renderer.setSize(window.innerWidth, window.innerHeight);
-  // arToolkitSource.copyElementSizeTo(renderer.domElement)
-  // arToolkitSource.onResizeElement();
-  const videoTag = document.getElementById("arjs-video") as HTMLVideoElement
-  if (videoTag) {
-    // https://teratail.com/questions/188846 より
-    // 元の動画のサイズ
-    var orgW = videoTag.videoWidth;
-    var orgH = videoTag.videoHeight;
-    var orgR = orgH / orgW;
+  arToolkitSource.init(() => {
+    setTimeout(() => {
+      onResize();
+      loading.value = false;
+    }, 2000);
+  });
 
-    // videoタグのサイズ
-    var videoW = videoTag.clientWidth;
-    var videoH = videoTag.clientHeight;
-    var videoR = videoH / videoW;
+  const arToolkitContext = new ArToolkitContext({
+    cameraParametersUrl: "data/camera_para.dat",
+    detectionMode: 'mono',
+    patternRatio: 0.5,
+    sourceWidth: window.innerWidth,
+    sourceHeight: window.innerHeight,
+    canvasWidth: window.innerWidth,
+    canvasHeight: window.innerHeight,
+    // debug: true
+  });
 
-    // 描画されている部分のサイズ
-    var screenW, screenH;
-    if (orgR > videoR) {
-      screenH = videoTag.clientHeight;
-      screenW = screenH / orgR;
-    } else {
-      screenW = videoTag.clientWidth;
-      screenH = screenW * orgR;
-    }
-    console.log(screenW, screenH);
-    renderer.setSize(screenW, screenH);
-    renderer.domElement.style.top = (window.innerHeight - screenH) / 2 + "px";
-    renderer.domElement.style.left = (window.innerWidth - screenW) / 2 + "px";
-    if (arToolkitContext.arController !== null) {
-      // arToolkitSource.copyElementSizeTo(arToolkitContext.arController.canvas)
-      arToolkitContext.arController.canvas.style.width = screenW;
-      arToolkitContext.arController.canvas.style.height = screenH;
+  arToolkitContext.init(() => {
+    camera.projectionMatrix.copy(arToolkitContext.getProjectionMatrix());
+  });
+
+  const marker = new Group();
+  scene.add(marker);
+  const arMarkerControls = new ArMarkerControls(arToolkitContext, marker, {
+    type: "pattern",
+    patternUrl: "data/pattern-nakaya.patt",
+    changeMatrixMode: "modelViewMatrix",
+  });
+  const mesh = new Mesh(new BoxGeometry(), new MeshNormalMaterial());
+  mesh.position.y = 0.5;
+  marker.add(mesh);
+
+  const div = ref<HTMLDivElement>()
+  onMounted(() => {
+    div.value?.appendChild?.(renderer.domElement);
+  })
+  // const width = ref(window.innerWidth)
+  // const height = ref(window.innerHeight)
+  const onResize = () => {
+    // width.value = window.innerWidth;
+    // height.value = window.innerHeight;
+    // renderer.setSize(window.innerWidth, window.innerHeight);
+    // arToolkitSource.copyElementSizeTo(renderer.domElement)
+    // arToolkitSource.onResizeElement();
+    const videoTag = document.getElementById("arjs-video") as HTMLVideoElement
+    if (videoTag) {
+      // https://teratail.com/questions/188846 より
+      // 元の動画のサイズ
+      var orgW = videoTag.videoWidth;
+      var orgH = videoTag.videoHeight;
+      var orgR = orgH / orgW;
+
+      // videoタグのサイズ
+      var videoW = videoTag.clientWidth;
+      var videoH = videoTag.clientHeight;
+      var videoR = videoH / videoW;
+
+      // 描画されている部分のサイズ
+      var screenW, screenH;
+      if (orgR > videoR) {
+        screenH = videoTag.clientHeight;
+        screenW = screenH / orgR;
+      } else {
+        screenW = videoTag.clientWidth;
+        screenH = screenW * orgR;
+      }
+      console.log(screenW, screenH);
+      renderer.setSize(screenW, screenH);
+      renderer.domElement.style.top = (window.innerHeight - screenH) / 2 + "px";
+      renderer.domElement.style.left = (window.innerWidth - screenW) / 2 + "px";
+      if (arToolkitContext.arController !== null) {
+        // arToolkitSource.copyElementSizeTo(arToolkitContext.arController.canvas)
+        arToolkitContext.arController.canvas.style.width = screenW;
+        arToolkitContext.arController.canvas.style.height = screenH;
+      }
     }
   }
+  onResize()
+  window.addEventListener("resize", onResize)
+  let running = true;
+  onUnmounted(() => {
+    window.removeEventListener("resize", onResize)
+    running = false;
+  })
+
+  requestAnimationFrame(function animate() {
+    running && requestAnimationFrame(animate);
+    if (arToolkitSource.ready) {
+
+      arToolkitContext.update(arToolkitSource.domElement);
+      scene.visible = camera.visible;
+    }
+    renderer.render(scene, camera);
+  });
+
+  // console.log(ar)
+  // console.log(ArToolkitSource, ArToolkitContext, ArMarkerControls)
+} else {
+  window.addEventListener("resize", () => {
+    if (window.innerHeight < window.innerWidth) {
+      location.reload()
+    }
+  })
 }
-onResize()
-window.addEventListener("resize", onResize)
-let running = true;
-onUnmounted(() => {
-  window.removeEventListener("resize", onResize)
-  running = false;
-})
-
-requestAnimationFrame(function animate() {
-  running && requestAnimationFrame(animate);
-  if (arToolkitSource.ready) {
-
-    arToolkitContext.update(arToolkitSource.domElement);
-    scene.visible = camera.visible;
-  }
-  renderer.render(scene, camera);
-});
-
-// console.log(ar)
-// console.log(ArToolkitSource, ArToolkitContext, ArMarkerControls)
-
 </script>
 
 <style lang="scss">
