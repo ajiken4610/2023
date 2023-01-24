@@ -22,7 +22,7 @@ import { ArToolkitSource, ArToolkitContext, ArMarkerControls } from "@ar-js-org/
 const loading = ref(true)
 const div = ref<HTMLDivElement>()
 const horizontal = window.innerHeight < window.innerWidth;
-const height = window.innerHeight;
+const height = window.innerHeight + "px";
 if (horizontal) {
   const renderer = new WebGLRenderer({
     alpha: true,
