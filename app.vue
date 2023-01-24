@@ -40,8 +40,8 @@ if (horizontal) {
 
   const arToolkitSource = new ArToolkitSource({
     sourceType: "webcam",
-    sourceWidth: window.innerWidth,
-    sourceHeight: window.innerHeight,
+    // sourceWidth: 640,
+    // sourceHeight: 640 * window.innerHeight / window.innerWidth,
     displayWidth: window.innerWidth,
     displayHeight: window.innerHeight
   });
