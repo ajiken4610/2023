@@ -87,7 +87,7 @@ if (horizontal) {
   });
   const meshY = new Mesh(new SphereGeometry(), new MeshNormalMaterial());
   meshY.position.y = 0.5;
-  markerN.add(meshY);
+  markerY.add(meshY);
 
   onMounted(() => {
     div.value?.appendChild?.(renderer.domElement);
