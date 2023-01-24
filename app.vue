@@ -14,7 +14,6 @@ import {
   Camera,
   MeshNormalMaterial,
   Mesh,
-  Clock,
   Group,
   BoxGeometry,
 } from "three";
@@ -23,6 +22,7 @@ import { ArToolkitSource, ArToolkitContext, ArMarkerControls } from "@ar-js-org/
 const loading = ref(true)
 const div = ref<HTMLDivElement>()
 const horizontal = window.innerHeight < window.innerWidth;
+const height = window.innerHeight;
 if (horizontal) {
   const renderer = new WebGLRenderer({
     alpha: true,
@@ -89,6 +89,8 @@ if (horizontal) {
     // arToolkitSource.copyElementSizeTo(renderer.domElement)
     // arToolkitSource.onResizeElement();
     const videoTag = document.getElementById("arjs-video") as HTMLVideoElement
+    // videoTag.style.width = window.innerWidth + "px";
+    // videoTag.style.height = window.innerHeight + "px";
     if (videoTag) {
       // https://teratail.com/questions/188846 より
       // 元の動画のサイズ
@@ -141,13 +143,13 @@ if (horizontal) {
 
   // console.log(ar)
   // console.log(ArToolkitSource, ArToolkitContext, ArMarkerControls)
-} else {
-  window.addEventListener("resize", () => {
-    if (window.innerHeight < window.innerWidth) {
-      location.reload()
-    }
-  })
 }
+window.addEventListener("resize", () => {
+  if (horizontal !== window.innerHeight < window.innerWidth) {
+    location.reload()
+  }
+})
+
 </script>
 
 <style lang="scss">
@@ -165,7 +167,7 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100vh;
+  height: v-bind(height);
   font-size: 3rem;
   text-align: center;
 }
