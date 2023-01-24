@@ -16,6 +16,7 @@ import {
   Mesh,
   Group,
   BoxGeometry,
+  SphereGeometry
 } from "three";
 // @ts-ignore
 import { ArToolkitSource, ArToolkitContext, ArMarkerControls } from "@ar-js-org/ar.js/three.js/build/ar-threex";
@@ -66,16 +67,27 @@ if (horizontal) {
     camera.projectionMatrix.copy(arToolkitContext.getProjectionMatrix());
   });
 
-  const marker = new Group();
-  scene.add(marker);
-  const arMarkerControls = new ArMarkerControls(arToolkitContext, marker, {
+  const markerN = new Group();
+  scene.add(markerN);
+  const _arMarkerControlsN = new ArMarkerControls(arToolkitContext, markerN, {
     type: "pattern",
     patternUrl: "data/pattern-nakaya.patt",
     changeMatrixMode: "modelViewMatrix",
   });
-  const mesh = new Mesh(new BoxGeometry(), new MeshNormalMaterial());
-  mesh.position.y = 0.5;
-  marker.add(mesh);
+  const meshN = new Mesh(new BoxGeometry(), new MeshNormalMaterial());
+  meshN.position.y = 0.5;
+  markerN.add(meshN);
+
+  const markerY = new Group();
+  scene.add(markerY);
+  const _arMarkerControlsY = new ArMarkerControls(arToolkitContext, markerY, {
+    type: "pattern",
+    patternUrl: "data/pattern-yamashita.patt",
+    changeMatrixMode: "modelViewMatrix",
+  });
+  const meshY = new Mesh(new SphereGeometry(), new MeshNormalMaterial());
+  meshY.position.y = 0.5;
+  markerN.add(meshY);
 
   onMounted(() => {
     div.value?.appendChild?.(renderer.domElement);
