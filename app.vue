@@ -1,5 +1,6 @@
 <template lang="pug">
-div(ref="div")
+div
+  div(ref="div" v-show="!loading")
 </template>
 
 
@@ -37,20 +38,23 @@ const arToolkitSource = new ArToolkitSource({
   displayHeight: window.innerHeight
 });
 
+const loading = ref(true)
 arToolkitSource.init(() => {
   setTimeout(() => {
     onResize();
+    loading.value = false;
   }, 2000);
 });
 
 const arToolkitContext = new ArToolkitContext({
   cameraParametersUrl: "data/camera_para.dat",
+  detectionMode: 'mono',
   patternRatio: 0.5,
   sourceWidth: window.innerWidth,
   sourceHeight: window.innerHeight,
   canvasWidth: window.innerWidth,
   canvasHeight: window.innerHeight,
-  debug: true
+  // debug: true
 });
 
 arToolkitContext.init(() => {
@@ -77,18 +81,59 @@ onMounted(() => {
 const onResize = () => {
   // width.value = window.innerWidth;
   // height.value = window.innerHeight;
-  renderer.setSize(window.innerWidth, window.innerHeight);
-  arToolkitSource.onResizeElement();
-  if (arToolkitContext.arController !== null) {
-    arToolkitContext.arController.canvas.style.width = window.innerWidth;
-    arToolkitContext.arController.canvas.style.height = window.innerHeight;
+  // renderer.setSize(window.innerWidth, window.innerHeight);
+  // arToolkitSource.copyElementSizeTo(renderer.domElement)
+  // arToolkitSource.onResizeElement();
+  const videoTag = document.getElementById("arjs-video") as HTMLVideoElement
+  if (videoTag) {
+    // https://teratail.com/questions/188846 より
+    // 元の動画のサイズ
+    var orgW = videoTag.videoWidth;
+    var orgH = videoTag.videoHeight;
+    var orgR = orgH / orgW;
+
+    // videoタグのサイズ
+    var videoW = videoTag.clientWidth;
+    var videoH = videoTag.clientHeight;
+    var videoR = videoH / videoW;
+
+    // 描画されている部分のサイズ
+    var screenW, screenH;
+    if (orgR > videoR) {
+      screenH = videoTag.clientHeight;
+      screenW = screenH / orgR;
+    } else {
+      screenW = videoTag.clientWidth;
+      screenH = screenW * orgR;
+    }
+    console.log(screenW, screenH);
+    renderer.setSize(screenW, screenH);
+    renderer.domElement.style.top = (window.innerHeight - screenH) / 2 + "px";
+    if (arToolkitContext.arController !== null) {
+      // arToolkitSource.copyElementSizeTo(arToolkitContext.arController.canvas)
+      arToolkitContext.arController.canvas.style.width = screenW;
+      arToolkitContext.arController.canvas.style.height = screenH;
+    }
   }
+
 }
 onResize()
 window.addEventListener("resize", onResize)
+let running = true;
 onUnmounted(() => {
   window.removeEventListener("resize", onResize)
+  running = false;
 })
+
+requestAnimationFrame(function animate() {
+  running && requestAnimationFrame(animate);
+  if (arToolkitSource.ready) {
+
+    arToolkitContext.update(arToolkitSource.domElement);
+    scene.visible = camera.visible;
+  }
+  renderer.render(scene, camera);
+});
 
 // console.log(ar)
 // console.log(ArToolkitSource, ArToolkitContext, ArMarkerControls)
