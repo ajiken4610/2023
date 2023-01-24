@@ -40,6 +40,8 @@ if (horizontal) {
 
   const arToolkitSource = new ArToolkitSource({
     sourceType: "webcam",
+    sourceWidth: window.innerWidth,
+    sourceHeight: window.innerHeight,
     displayWidth: window.innerWidth,
     displayHeight: window.innerHeight
   });
@@ -56,8 +58,6 @@ if (horizontal) {
     cameraParametersUrl: "data/camera_para.dat",
     detectionMode: 'mono',
     patternRatio: 0.5,
-    sourceWidth: window.innerWidth,
-    sourceHeight: window.innerHeight,
     canvasWidth: window.innerWidth,
     canvasHeight: window.innerHeight,
     // debug: true
