@@ -1,7 +1,8 @@
 <template lang="pug">
 div(v-if="horizontal")
   div(ref="div" v-show="!loading")
-div(v-else) 画面を横向きにしてください
+.horizontalizer(v-else)
+  div 画面を横向きにしてください
 </template>
 
 
@@ -20,6 +21,7 @@ import {
 // @ts-ignore
 import { ArToolkitSource, ArToolkitContext, ArMarkerControls } from "@ar-js-org/ar.js/three.js/build/ar-threex";
 const loading = ref(true)
+const div = ref<HTMLDivElement>()
 const horizontal = window.innerHeight < window.innerWidth;
 if (horizontal) {
   const renderer = new WebGLRenderer({
@@ -75,7 +77,6 @@ if (horizontal) {
   mesh.position.y = 0.5;
   marker.add(mesh);
 
-  const div = ref<HTMLDivElement>()
   onMounted(() => {
     div.value?.appendChild?.(renderer.domElement);
   })
@@ -156,5 +157,16 @@ body {
 
 #arjs-video {
   overflow: hidden;
+}
+</style>
+
+<style scoped lang="scss">
+.horizontalizer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  font-size: 3rem;
+  text-align: center;
 }
 </style>
