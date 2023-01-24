@@ -109,13 +109,13 @@ const onResize = () => {
     console.log(screenW, screenH);
     renderer.setSize(screenW, screenH);
     renderer.domElement.style.top = (window.innerHeight - screenH) / 2 + "px";
+    renderer.domElement.style.left = (window.innerWidth - screenW) / 2 + "px";
     if (arToolkitContext.arController !== null) {
       // arToolkitSource.copyElementSizeTo(arToolkitContext.arController.canvas)
       arToolkitContext.arController.canvas.style.width = screenW;
       arToolkitContext.arController.canvas.style.height = screenH;
     }
   }
-
 }
 onResize()
 window.addEventListener("resize", onResize)
