@@ -73,6 +73,7 @@ if (horizontal) {
     type: "pattern",
     patternUrl: "data/pattern-nakaya.patt",
     changeMatrixMode: "modelViewMatrix",
+    size: 2
   });
   const meshN = new Mesh(new BoxGeometry(), new MeshNormalMaterial());
   meshN.position.y = 0.5;
@@ -84,6 +85,7 @@ if (horizontal) {
     type: "pattern",
     patternUrl: "data/pattern-yamashita.patt",
     changeMatrixMode: "modelViewMatrix",
+    size: 2
   });
   const meshY = new Mesh(new SphereGeometry(), new MeshNormalMaterial());
   meshY.position.y = 0.5;
