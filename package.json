@@ -8,11 +8,14 @@
         "postinstall": "nuxt prepare"
     },
     "devDependencies": {
+        "@ar-js-org/ar.js": "^3.4.3",
         "@prettier/plugin-pug": "^2.4.1",
+        "@types/three": "^0.148.1",
         "@volar/vue-language-plugin-pug": "latest",
         "nuxt": "^3.0.0",
         "prettier": "^2.8.3",
         "pug": "^3.0.2",
-        "sass": "^1.57.1"
+        "sass": "^1.57.1",
+        "three": "^0.148.0"
     }
 }
