@@ -16,8 +16,15 @@ import {
   Mesh,
   Group,
   BoxGeometry,
-  SphereGeometry
+  SphereGeometry,
+  HemisphereLight,
+  CubeTextureLoader,
+  CubeTexture,
+  Object3D,
+  MeshStandardMaterial,
+  Material
 } from "three";
+import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader"
 // @ts-ignore
 import { ArToolkitSource, ArToolkitContext, ArMarkerControls } from "@ar-js-org/ar.js/three.js/build/ar-threex";
 const loading = ref(true)
@@ -25,6 +32,8 @@ const div = ref<HTMLDivElement>()
 const horizontal = window.innerHeight < window.innerWidth;
 const height = window.innerHeight + "px";
 if (horizontal) {
+  const loader = new GLTFLoader()
+  const cubemapLoader = new CubeTextureLoader();
   const renderer = new WebGLRenderer({
     alpha: true,
   });
@@ -37,6 +46,7 @@ if (horizontal) {
   scene.visible = false;
   const camera = new Camera();
   scene.add(camera);
+  scene.add(new HemisphereLight())
 
   const arToolkitSource = new ArToolkitSource({
     sourceType: "webcam",
@@ -45,7 +55,6 @@ if (horizontal) {
     displayWidth: window.innerWidth,
     displayHeight: window.innerHeight
   });
-
 
   arToolkitSource.init(() => {
     setTimeout(() => {
@@ -67,6 +76,17 @@ if (horizontal) {
     camera.projectionMatrix.copy(arToolkitContext.getProjectionMatrix());
   });
 
+  const cubemap = await new Promise<CubeTexture>((resolve) => {
+    cubemapLoader.load(["data/px.png", "data/nx.png", "data/py.png", "data/ny.png", "data/pz.png", "data/nz.png"],
+      (texture) => { resolve(texture) })
+  })
+  scene.environment = cubemap;
+
+  // const isMesh = (o: Object3D): o is Mesh => o.type === "Mesh"
+  // const isMeshStandardMaterial = (o: Material): o is MeshStandardMaterial =>
+  //   // @ts-ignore
+  //   !!o.isMeshStandardMaterial
+
   const markerN = new Group();
   scene.add(markerN);
   const _arMarkerControlsN = new ArMarkerControls(arToolkitContext, markerN, {
@@ -75,8 +95,22 @@ if (horizontal) {
     changeMatrixMode: "modelViewMatrix",
     size: 2
   });
-  const meshN = new Mesh(new BoxGeometry(), new MeshNormalMaterial());
-  meshN.position.y = 0.5;
+  // const meshN = new Mesh(new BoxGeometry(), new MeshNormalMaterial());
+  const meshN = (await loader.loadAsync("data/nakaya.glb")).scene;
+  // meshN.traverse((object) => {
+  //   if (isMesh(object)) {
+  //     if (Array.isArray(object.material)) {
+  //       for (const m of object.material) {
+  //         if ("envMap" in m) {
+  //           console.log(m)
+  //           m.envMap = cubemap;
+  //         }
+  //       }
+  //     }
+  //   }
+  // })
+
+  // meshN.position.y = 0.5;
   markerN.add(meshN);
 
   const markerY = new Group();
@@ -87,8 +121,21 @@ if (horizontal) {
     changeMatrixMode: "modelViewMatrix",
     size: 2
   });
-  const meshY = new Mesh(new SphereGeometry(), new MeshNormalMaterial());
-  meshY.position.y = 0.5;
+  // const meshY = new Mesh(new SphereGeometry(), new MeshNormalMaterial());
+  const meshY = (await loader.loadAsync("data/textest.glb")).scene;
+  // meshY.traverse((object) => {
+  //   if (isMesh(object)) {
+  //     if (Array.isArray(object.material)) {
+  //       for (const m of object.material) {
+  //         if (isMeshStandardMaterial(m)) {
+  //           m.envMap = cubemap;
+  //           m.needsUpdate = true;
+  //         }
+  //       }
+  //     }
+  //   }
+  // })
+  // meshY.position.y = 0.5;
   markerY.add(meshY);
 
   onMounted(() => {
