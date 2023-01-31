@@ -64,7 +64,7 @@ if (horizontal) {
   });
 
   const arToolkitContext = new ArToolkitContext({
-    cameraParametersUrl: "data/camera_para.dat",
+    cameraParametersUrl: "data-20230131/camera_para.dat",
     detectionMode: 'mono',
     patternRatio: 0.5,
     canvasWidth: window.innerWidth,
@@ -77,7 +77,7 @@ if (horizontal) {
   });
 
   const cubemap = await new Promise<CubeTexture>((resolve) => {
-    cubemapLoader.load(["data/px.png", "data/nx.png", "data/py.png", "data/ny.png", "data/pz.png", "data/nz.png"],
+    cubemapLoader.load(["data-20230131/px.png", "data-20230131/nx.png", "data-20230131/py.png", "data-20230131/ny.png", "data-20230131/pz.png", "data-20230131/nz.png"],
       (texture) => { resolve(texture) })
   })
   scene.environment = cubemap;
@@ -91,12 +91,12 @@ if (horizontal) {
   scene.add(markerN);
   const _arMarkerControlsN = new ArMarkerControls(arToolkitContext, markerN, {
     type: "pattern",
-    patternUrl: "data/pattern-nakaya.patt",
+    patternUrl: "data-20230131/pattern-nakaya.patt",
     changeMatrixMode: "modelViewMatrix",
     size: 2
   });
   // const meshN = new Mesh(new BoxGeometry(), new MeshNormalMaterial());
-  const meshN = (await loader.loadAsync("data/nakaya.glb")).scene;
+  const meshN = (await loader.loadAsync("data-20230131/nakaya.glb")).scene;
   // meshN.traverse((object) => {
   //   if (isMesh(object)) {
   //     if (Array.isArray(object.material)) {
@@ -117,12 +117,12 @@ if (horizontal) {
   scene.add(markerY);
   const _arMarkerControlsY = new ArMarkerControls(arToolkitContext, markerY, {
     type: "pattern",
-    patternUrl: "data/pattern-yamashita.patt",
+    patternUrl: "data-20230131/pattern-yamashita.patt",
     changeMatrixMode: "modelViewMatrix",
     size: 2
   });
   // const meshY = new Mesh(new SphereGeometry(), new MeshNormalMaterial());
-  const meshY = (await loader.loadAsync("data/textest.glb")).scene;
+  const meshY = (await loader.loadAsync("data-20230131/textest.glb")).scene;
   // meshY.traverse((object) => {
   //   if (isMesh(object)) {
   //     if (Array.isArray(object.material)) {
